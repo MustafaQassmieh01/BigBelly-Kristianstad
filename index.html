@@ -9,18 +9,76 @@
 <body>
   <header>
     <div class="container">
-      <h1 class="main-title">BigBelly Kristianstad</h1>
-      <p class="tagline">Välkommen till vår restaurang</p>
+      <!-- Stone plate: decorative stretched background with a centered logo image on top -->
+      <div class="stone-plate" aria-hidden="true">
+        <img class="header-logo" src="public/logo.png" alt="BigBelly logo" />
+        <!-- Place the title and tagline inside the plate so they appear on the image -->
+        <div class="plate-text">
+          <h1 class="main-title">BigBelly Kristianstad</h1>
+          <p class="tagline">Välkommen till vår restaurang</p>
+        </div>
+      </div>
     </div>
   </header>
 
-  <main id="menu-content" class="container">
-    <!-- Sections will be loaded here -->
-  </main>
+  <!-- Page layout: sticky nav sidebar + main content -->
+  <div class="page-layout container">
+    <aside class="nav-sidebar" aria-label="Meny navigation">
+      <nav class="nav-gallery" aria-label="Meny links">
+        <a class="nav-item" href="menu.html#grillmeny">
+          <img src="public/Navigation/GRILL.png" alt="Grillmeny" />
+        </a>
+        <a class="nav-item" href="menu.html#maltider">
+          <img src="public/Navigation/MÅLTIDER.png" alt="Måltider" />
+        </a>
+        <a class="nav-item" href="menu.html#pizzor">
+          <img src="public/Navigation/PIZZOR.png" alt="Pizzor" />
+        </a>
+        <a class="nav-item" href="menu.html#piroger">
+          <img src="public/Navigation/PEROGER.png" alt="Piroger" />
+        </a>
+        <a class="nav-item" href="menu.html#rullar">
+          <img src="public/Navigation/RULLAR.png" alt="Rullar" />
+        </a>
+      </nav>
+    </aside>
+
+    <div class="wood-area">
+      <!-- Use an actual <img> so the container can size to the image's intrinsic ratio -->
+      <img class="wood-bg" src="public/background for bigbelly.jpg" alt="Wood background" />
+      <div class="wood-scroll">
+        <main id="menu-content" class="main-column">
+          <!-- Sections will be loaded here -->
+        </main>
+      </div>
+    </div>
+  </div>
+  
 
   <footer>
     <div class="container">
-      <p>&copy; 2025 BigBelly Kristianstad. Alla rättigheter förbehållna.</p>
+  <div class="footer-cta-wrap">
+    <div class="footer-cta" aria-hidden="true">Beställ nu</div>
+  </div>
+  <div class="footer-logos" aria-label="Samarbetspartner logotyper">
+        <a class="footer-logo-link" href="https://www.foodora.se/restaurant/qwqb/big-belly-kristianstad" title="Big Belly på Foodora" target="_blank" rel="noopener" aria-label="Öppna Big Belly på Foodora (öppnas i ny flik)">
+          <img class="footer-logo-img" src="public/Foodora_Logo.png" alt="Foodora" />
+        </a>
+        <a class="footer-logo-link" href="https://wolt.com/sv/swe/kristianstad/restaurant/big-belly-kristianstad" title="Big Belly på Wolt" target="_blank" rel="noopener" aria-label="Öppna Big Belly på Wolt (öppnas i ny flik)">
+          <img class="footer-logo-img" src="public/wolt-seeklogo.png" alt="Wolt" />
+        </a>
+        <a class="footer-logo-link" href="https://www.ubereats.com/se-en/store/big-belly-kristianstad/pt3idZYJXmerV1grhAXEYA" title="Big Belly på Uber Eats" target="_blank" rel="noopener" aria-label="Öppna Big Belly på Uber Eats (öppnas i ny flik)">
+          <img class="footer-logo-img" src="public/UE_Logo.svg" alt="Uber Eats" />
+        </a>
+        <!-- location pin to directions -->
+        <a class="footer-loc-link" href="https://maps.app.goo.gl/wd2wDnRXNkZ8avep9" title="Vägbeskrivning till Big Belly Kristianstad" target="_blank" rel="noopener" aria-label="Öppna vägbeskrivning till Big Belly Kristianstad (öppnas i ny flik)">
+          <!-- inline SVG pin icon -->
+          <svg class="footer-loc-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" />
+          </svg>
+        </a>
+      </div>
+      <p class="footer-copy">&copy; 2025 BigBelly Kristianstad. Alla rättigheter förbehållna.</p>
     </div>
   </footer>
 

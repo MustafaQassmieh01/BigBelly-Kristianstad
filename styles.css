@@ -3,7 +3,11 @@
 :root {
   --bg1: #0f172a; /* deep navy */
   --bg2: #1e293b; /* slate */
-  --accent: #f59e0b; /* warm amber */
+  --accent: #d97706; /* warm burnt orange */
+  --header-max-width: 1000px; /* lowered by 100px per request */
+  --wood-offset: -68px; /* horizontal nudge for wood menu (negative moves left) - increased per request */
+  --tile-w: 300px;
+  --tile-h: 300px;
   --accent-light: #fbbf24;
   --glass: rgba(255,255,255,0.06);
   --border: rgba(255,255,255,0.1);
@@ -21,7 +25,14 @@ html, body {
 
 body {
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 60%);
+  /* Wood board light brown background (image added in public/) */
+  background-color: #d9b78a; /* fallback light brown */
+  /* site-wide coal background image (placed in public/) */
+  background-image: url("public/coalbackground.png");
+  background-repeat: no-repeat;
+  background-size: cover; /* cover whole viewport */
+  background-position: center center;
+  background-attachment: fixed; /* keeps background fixed while content scrolls */
   color: #fff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -36,41 +47,323 @@ body {
 
 /* Header */
 header {
-  padding: 40px 0;
+  padding: 0; /* removed padding to make header flush */
   text-align: center;
-  background: linear-gradient(180deg, rgba(0,0,0,0.3), transparent);
-  border-bottom: 2px solid var(--accent);
-  margin-bottom: 40px;
+  background: transparent; /* let the wood background show */
+  margin-bottom: 60px; /* give extra space below header so shadow doesn't touch following content */
 }
 
 .main-title {
-  font-size: 48px;
-  letter-spacing: 3px;
-  margin-bottom: 8px;
+  font-size: clamp(18px, 2.6vw, 28px); /* smaller, responsive headline under the logo */
+  letter-spacing: 2px;
+  margin: 6px 0 10px;
   font-weight: 700;
-  color: var(--accent);
+  color: #fff;
   text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
 }
 
-.tagline {
-  font-size: 18px;
-  color: rgba(255,255,255,0.8);
-  font-weight: 300;
+/* Stone plate header */
+.stone-plate {
+  width: 100%;
+  max-width: calc(var(--header-max-width) ); /* same as .wood-area */
+  margin: 0 auto 12px; /* centered */
+  height: clamp(380px, 34vw, 720px);
+  /* background moved to ::before so we can apply the shadow to the image itself */
+  background: transparent;
+  position: relative; /* create stacking context for centered logo */
+  z-index: 1;
+  overflow: visible; /* allow the plate's drop-shadow to extend outside the container */
+  border-radius: 8px;
+  /* container has no outer shadow; the plate image will have its own shadow */
+  box-shadow: none;
 }
+
+/* move the plate background into a pseudo-element so the shadow/border affect the image only */
+.stone-plate::before {
+  content: "";
+  position: absolute;
+  /* expand the pseudo-element a bit so the shadow has some room, but not too much */
+  inset: -14px;
+  background-image: url("public/header background.png");
+  /* stretch the plate background to fully cover and position the image so the bottom edge is visible */
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  border-radius: calc(8px + 14px); /* keep rounded corners when expanded */
+  z-index: 1;
+  pointer-events: none;
+  border: none;
+  /* moderately long drop shadow to lift the plate without touching the title */
+  filter: drop-shadow(0 20px 60px rgba(180, 50, 10, 0.65));
+}
+
+.stone-plate .header-logo {
+  position: absolute;
+  left: 50%;
+  top: 36%; /* lift the logo higher so title sits below it */
+  transform: translate(-50%, -50%);
+  width: clamp(320px, 44vw, var(--header-max-width)); /* scale with header cap */
+  height: auto;
+  display: block;
+  pointer-events: none;
+  filter: none; /* remove logo drop-shadow so only plate shows shadow */
+  box-shadow: none;
+  z-index: 3; /* sit above the plate image pseudo-element */
+}
+
+.header-text {
+  /* kept for compatibility but hidden when plate-text is used */
+  display: none;
+}
+
+/* Text that sits inside the plate image */
+.plate-text {
+  position: absolute;
+  left: 50%;
+  bottom: 12%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 3;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.7);
+  pointer-events: none;
+}
+
+.plate-text .main-title {
+  width: min(92%, var(--header-max-width));
+  font-size: clamp(14px, 2.2vw, 30px); /* smaller heading and max reduced to help fit on one line */
+  margin: 0 auto 6px;
+  letter-spacing: 1.0px;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.05;
+  white-space: nowrap; /* keep the heading on a single line */
+  overflow: visible;
+}
+
+.plate-text .tagline {
+  margin: 0;
+  font-size: clamp(12px, 1.8vw, 18px);
+  color: rgba(255,255,255,0.92);
+  font-style: normal;
+}
+
+/* tagline styles are declared further down (keeps sizes consistent) */
+
+/* Navigation gallery: round images with white labels */
+.nav-gallery {
+  margin-top: 6px;
+  display: flex;
+  gap: 10px; /* tighten gap between nav items */
+  flex-direction: column;
+  align-items: center;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.nav-item img {
+  width: 128px; /* larger nav icons */
+  height: 128px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 0; /* remove white border around nav images */
+  box-shadow: 0 6px 14px rgba(0,0,0,0.28);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  background: rgba(255,255,255,0.02);
+}
+
+.nav-item:hover img,
+.nav-item:focus img {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.45);
+}
+
+.nav-label { display: none !important; }
+
+.main-column {
+  flex: 1 1 auto;
+}
+
+/* Sticky sidebar styling improvements */
+.nav-sidebar {
+  flex: 0 0 100px; /* slightly narrower so content sits closer to the menu */
+  position: sticky;
+  top: 18px;
+  z-index: 20; /* keep it above normal flow but not high enough to overlay other UI unexpectedly */
+  background: transparent; /* keep transparent so menu isn't obscured */
+  padding: 4px 4px 4px 2px; /* reduce padding to bring it closer */
+  border-radius: 12px;
+  align-self: flex-start;
+}
+
+/* Layout: sidebar + main column */
+.page-layout {
+  display: flex;
+  gap: 6px; /* tighten space between nav and menu for visual balance */
+  align-items: flex-start;
+}
+
+/* Confined wood background area: 3x4 tiles (width x height); menu scrolls inside this box */
+.wood-area {
+  /* Container now sizes to the inner image (.wood-bg). The image preserves its ratio
+     and defines the height/width of this block. The scroll layer overlays the image. */
+  --th: calc(var(--tile-h) * 0.9);
+  width: 100%;
+  /* slightly narrower than the header so the visible wood texture visually lines up under the plate */
+  max-width: calc(var(--header-max-width) - 160px);
+  /* nudge left/right: translateX moves the centered block without changing layout flow */
+  transform: translateX(var(--wood-offset));
+  margin: 0 auto 20px;
+  position: relative; /* for the overlay scroll area */
+  border-radius: 12px;
+  overflow: visible; /* allow pseudo/shadows to extend if needed */
+}
+
+/* Make the menu max-width responsive: larger screens get a slightly wider menu */
+/* On large screens gently expand the aligned header+menu to a wider cap */
+@media (min-width: 1200px) {
+  :root { --header-max-width: 1000px; }
+}
+
+/* Small screens: ensure the menu never exceeds viewport minus padding */
+@media (max-width: 640px) {
+  .wood-area { max-width: calc(100% - 40px); transform: none; }
+}
+
+.wood-bg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: inherit;
+}
+
+.wood-scroll {
+  position: absolute; /* overlay the content on top of the background image */
+  inset: 0;
+  overflow-y: auto;
+  padding: 20px 24px;
+  box-sizing: border-box;
+  background: linear-gradient(rgba(0,0,0,0.0), rgba(0,0,0,0.0));
+}
+
+/* Custom scrollbar: make the thumb look like a glossy, rounded "mayo drop" */
+.wood-scroll {
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.95) transparent;
+}
+
+/* Webkit-based browsers */
+.wood-scroll::-webkit-scrollbar {
+  width: 25px; /* reduced by 3px */
+}
+
+.wood-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.wood-scroll::-webkit-scrollbar-thumb {
+  background: radial-gradient(circle at 40% 30%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.92) 18%, rgba(255,255,255,0.88) 36%, rgba(255,255,255,0.78) 64%, rgba(255,255,255,0.65) 100%);
+  border-radius: 999px; /* pill/drop shape */
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5), inset 0 -8px 18px rgba(255,255,255,0.06);
+  border: 8px solid rgba(255,255,255,0.02); /* heavier halo to increase perceived weight */
+}
+
+.wood-scroll::-webkit-scrollbar-thumb:hover {
+  box-shadow: 0 16px 36px rgba(0,0,0,0.55), inset 0 -10px 22px rgba(255,255,255,0.08);
+}
+
+/* Optional: make the thumb slightly narrower on small screens */
+@media (max-width: 480px) {
+  .wood-scroll::-webkit-scrollbar { width: 15px; }
+}
+
+/* hide scrollbar buttons (up/down arrows) on WebKit */
+.wood-scroll::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* corner */
+.wood-scroll::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox: make scrollbar visually heavier */
+.wood-scroll {
+  scrollbar-width: auto; /* default/auto makes it thicker than 'thin' */
+  scrollbar-color: rgba(255,255,255,0.95) transparent;
+}
+
+/* LARGE SCREENS: hide the visual scrollbar for the wood-scroll area and enable page scroll-snapping
+   The wood-scroll container remains scrollable (wheel/touch), but the track/thumb are hidden.
+   Also enable page-level snap so the viewport snaps to header / menu (wood-area) / footer on large screens.
+*/
+@media (min-width: 992px) {
+  /* Hide the scrollbar visually while keeping scroll functional */
+  .wood-scroll {
+    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .wood-scroll::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  /* Page-level scroll snapping for desktop: header, menu, footer */
+  html, body {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
+
+  header, .wood-area, footer {
+    scroll-snap-align: start;
+    /* make sure sticky nav doesn't overlap snapped content */
+    scroll-margin-top: 36px;
+  }
+
+  /* Ensure the sidebar nav remains pinned/visible during the menu snap */
+  .nav-sidebar {
+    position: sticky;
+    top: 18px;
+    z-index: 30;
+  }
+}
+
+/* Sticky sidebar styling improvements - transparent so it doesn't cover content */
+ .nav-sidebar {
+   background: transparent; /* no opaque background so it won't cover content */
+   padding: 6px 4px; /* keep the nav items aligned to the top */
+ }
 
 /* Main Content */
 main {
   padding-bottom: 60px;
 }
+.plate-text .main-title {
+  text-shadow: 0 2px 12px rgba(255, 100, 20, 0.6);
+}
 
 /* Menu Section */
 .menu-section {
   margin-bottom: 60px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.04);
+  backdrop-filter: blur(4px);
 }
 
 .section-title {
@@ -79,9 +372,10 @@ main {
   margin-bottom: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  border-bottom: 2px solid var(--accent);
-  padding-bottom: 12px;
+  letter-spacing: 1.5px;
+  border-bottom: 2px solid rgba(255, 150, 40, 0.9);
+  text-shadow: 0 0 12px rgba(255, 100, 40, 0.6);
+  font-family: Georgia, 'Times New Roman', serif;
 }
 
 .section-note {
@@ -100,18 +394,16 @@ main {
 .menu-item {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  padding: 16px;
-  background: rgba(255,255,255,0.03);
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.05);
-  transition: all 0.3s ease;
+  align-items: center;
+  padding: 14px;
+  background: rgba(0,0,0,0.18);
+  border-radius: 10px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .menu-item:hover {
-  background: rgba(255,255,255,0.06);
-  border-color: var(--accent);
-  transform: translateX(4px);
+  box-shadow: 0 12px 30px rgba(255, 100, 20, 0.28);
+  transform: translateY(-4px);
 }
 
 .item-info {
@@ -131,16 +423,16 @@ main {
 
 .item-name {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   color: #fff;
 }
 
 .item-desc {
   font-size: 14px;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255,255,255,0.72);
   font-style: italic;
   display: block;
-  margin-left: 30px;
+  margin-left: 0;
 }
 
 .item-note {
@@ -157,10 +449,10 @@ main {
 
 .item-price {
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--accent);
   white-space: nowrap;
-  margin-left: 16px;
+  margin-left: 12px;
 }
 
 .family-price {
@@ -171,18 +463,128 @@ main {
   margin-left: 4px;
 }
 
+/* keep menu single-column (one item per line) as requested */
+
 /* Footer */
 footer {
-  background: rgba(0,0,0,0.3);
-  padding: 24px 0;
+  background: rgba(0,0,0,0.65); /* darker so logos pop */
+  padding: 28px 0;
   text-align: center;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid rgba(255,255,255,0.04);
   margin-top: 40px;
+  box-shadow: 0 -8px 28px rgba(0,0,0,0.5) inset;
 }
 
 footer p {
   font-size: 14px;
-  color: rgba(255,255,255,0.6);
+  color: #fff;
+}
+
+/* Footer CTA (call-to-action) */
+.footer-cta-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px; /* space between CTA and logos */
+}
+
+.footer-cta {
+  display: inline-block;
+  background: var(--accent);
+  color: #111;
+  text-decoration: none;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  box-shadow: none; /* keep footer elements flat per request */
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+
+.footer-cta:hover,
+.footer-cta:focus {
+  transform: translateY(-3px);
+  opacity: 0.98;
+  outline: none;
+}
+
+.footer-copy {
+  margin-top: 14px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.82);
+}
+
+/* Footer logos: keep their aspect ratio and make them responsive */
+.footer-logos {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.footer-logo-link {
+  display: inline-block;
+  line-height: 1;
+  background: rgba(255,255,255,0.02);
+  padding: 0; /* removed inner padding per request; keep spacing via .footer-logos gap */
+  border-radius: 10px;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.footer-logo-img {
+  width: 120px; /* uniform width for all logos */
+  height: auto;
+  max-width: 120px;
+  display: block;
+  object-fit: contain;
+}
+
+/* Remove any visual shadow from footer tiles and the pin so they sit cleanly on the dark footer */
+.footer-logo-link, .footer-logo-img, .footer-loc-link, .footer-loc-icon {
+  box-shadow: none !important;
+}
+
+/* Tweak specific partner widths: increase Foodora by 10px and Uber Eats by 15px */
+.footer-logos > .footer-logo-link:nth-child(1) .footer-logo-img {
+  width: 130px;
+  max-width: 130px;
+}
+.footer-logos > .footer-logo-link:nth-child(3) .footer-logo-img {
+  width: 135px;
+  max-width: 135px;
+}
+
+@media (max-width: 480px) {
+  .footer-logo-img { width: 92px; max-width: 92px }
+  /* scale partner increases down on small screens (proportional) */
+  .footer-logos > .footer-logo-link:nth-child(1) .footer-logo-img { width: 102px; max-width: 102px; }
+  .footer-logos > .footer-logo-link:nth-child(3) .footer-logo-img { width: 107px; max-width: 107px; }
+}
+
+/* Footer location icon */
+.footer-loc-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  margin-left: 8px;
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  border-radius: 10px;
+  text-decoration: none;
+}
+
+.footer-loc-icon {
+  width: 26px;
+  height: 26px;
+  display: block;
+}
+
+@media (max-width: 480px) {
+  .footer-loc-link { width: 48px; height: 48px; }
+  .footer-loc-icon { width: 20px; height: 20px; }
 }
 
 /* Responsive Design */
@@ -192,7 +594,21 @@ footer p {
   }
 
   .main-title {
-    font-size: 36px;
+  font-size: 32px;
+  }
+
+  .stone-plate {
+    height: 220px;
+    background-size: contain;
+  }
+
+  .stone-plate .header-logo {
+    width: clamp(140px, 30vw, 320px); /* cap logo on tablet */
+  }
+
+  .nav-item img {
+  width: 96px;
+  height: 96px;
   }
 
   .tagline {
@@ -233,6 +649,30 @@ footer p {
     letter-spacing: 2px;
   }
 
+  .stone-plate {
+    height: 170px;
+    background-size: contain;
+  }
+
+  /* make nav icons slightly smaller on very small screens */
+  .nav-item img {
+  width: 84px;
+  height: 84px;
+  }
+
+  .header-text { text-align: center; }
+
+  .nav-sidebar {
+    /* show sidebar as a horizontal nav under header on very small screens */
+    display: block;
+  }
+  
+
+  .nav-item img {
+    width: 76px;
+    height: 76px;
+  }
+
   .section-title {
     font-size: 22px;
   }
@@ -253,4 +693,62 @@ footer p {
   .item-price {
     font-size: 18px;
   }
+}
+
+/* Small/medium screens: place nav under the header and show it as a horizontal row */
+@media (max-width: 768px) {
+  .page-layout {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .nav-sidebar {
+    display: block; /* ensure visible under header */
+    position: relative;
+    top: auto;
+    flex: 0 0 auto;
+    width: 100%;
+    padding: 8px 0;
+    background: transparent;
+    margin: 0;
+  }
+
+  .nav-gallery {
+    flex-direction: row;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 6px 12px;
+  }
+
+  .nav-item {
+    margin: 0;
+  }
+
+  .nav-item img {
+    width: 84px;
+    height: 84px;
+  }
+
+  /* when nav becomes horizontal, shrink/narrow the wood board to match layout */
+  .wood-area {
+    max-width: calc(100% - 48px);
+    transform: none; /* remove desktop nudge so board stays centered */
+    margin: 0 auto 12px;
+  }
+
+  /* compact menu rows when nav is horizontal */
+  .menu-item { padding: 8px; }
+  .item-name { font-size: 14px; }
+  .item-price { font-size: 16px; }
+
+  /* reduce vertical space between header and nav on small screens */
+  header {
+    margin-bottom: 18px; /* tightened from 60px to bring nav closer */
+  }
+
+  /* keep the main content full width under the nav */
+  .main-column { width: 100%; }
 }
