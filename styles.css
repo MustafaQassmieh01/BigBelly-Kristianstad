@@ -248,8 +248,8 @@ header {
 .wood-scroll {
   position: absolute; /* overlay the content on top of the background image */
   inset: 0;
-  overflow-y: auto;
-  padding: 20px 24px;
+    overflow-y: auto;
+    padding: 12px 8px; /* tighter padding on small screens to increase menu width */
   box-sizing: border-box;
   background: linear-gradient(rgba(0,0,0,0.0), rgba(0,0,0,0.0));
 }
@@ -298,11 +298,6 @@ header {
   background: transparent;
 }
 
-/* Firefox: make scrollbar visually heavier */
-.wood-scroll {
-  scrollbar-width: auto; /* default/auto makes it thicker than 'thin' */
-  scrollbar-color: rgba(255,255,255,0.95) transparent;
-}
 
 /* LARGE SCREENS: hide the visual scrollbar for the wood-scroll area and enable page scroll-snapping
    The wood-scroll container remains scrollable (wheel/touch), but the track/thumb are hidden.
@@ -358,12 +353,12 @@ main {
 /* Menu Section */
 .menu-section {
   margin-bottom: 60px;
-  background: rgba(255,255,255,0.04);
+  background: rgba(0, 0, 0, 0.406);
   border-radius: 14px;
   padding: 28px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.35);
   border: 1px solid rgba(255,255,255,0.04);
-  backdrop-filter: blur(4px);
+  
 }
 
 .section-title {
@@ -395,9 +390,10 @@ main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px;
-  background: rgba(0,0,0,0.18);
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.294);
   border-radius: 10px;
+  backdrop-filter: blur(4px);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
@@ -422,13 +418,13 @@ main {
 }
 
 .item-name {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   color: #fff;
 }
 
 .item-desc {
-  font-size: 14px;
+  font-size: 13px;
   color: rgba(255,255,255,0.72);
   font-style: italic;
   display: block;
@@ -448,7 +444,7 @@ main {
 }
 
 .item-price {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 800;
   color: var(--accent);
   white-space: nowrap;
@@ -478,39 +474,6 @@ footer {
 footer p {
   font-size: 14px;
   color: #fff;
-}
-
-/* Footer CTA (call-to-action) */
-.footer-cta-wrap {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 12px; /* space between CTA and logos */
-}
-
-.footer-cta {
-  display: inline-block;
-  background: var(--accent);
-  color: #111;
-  text-decoration: none;
-  padding: 10px 18px;
-  border-radius: 12px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  box-shadow: none; /* keep footer elements flat per request */
-  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
-}
-
-.footer-cta:hover,
-.footer-cta:focus {
-  transform: translateY(-3px);
-  opacity: 0.98;
-  outline: none;
-}
-
-.footer-copy {
-  margin-top: 14px;
-  font-size: 13px;
-  color: rgba(255,255,255,0.82);
 }
 
 /* Footer logos: keep their aspect ratio and make them responsive */
@@ -590,7 +553,7 @@ footer p {
 /* Responsive Design */
 @media (max-width: 768px) {
   .container {
-    padding: 0 16px;
+    padding: 0 8px; /* reduce page padding so menu can be wider on tablets */
   }
 
   .main-title {
@@ -598,18 +561,19 @@ footer p {
   }
 
   .stone-plate {
-    height: 220px;
+    height: 270px; /* slightly larger plate on small screens */
     background-size: contain;
+    max-width: 100%; /* stretch plate to full width on small screens */
+    margin: 0 auto 8px;
   }
 
   .stone-plate .header-logo {
-    /* scale logo up on tablets so it's more visible alongside the larger plate */
-    width: clamp(200px, 36vw, 380px); /* cap logo on tablet */
+    width: clamp(160px, 36vw, 420px); /* larger logo on tablet */
   }
 
   .nav-item img {
-  width: 96px;
-  height: 96px;
+    width: 64px;
+    height: 64px;
   }
 
   .tagline {
@@ -621,26 +585,75 @@ footer p {
   }
 
   .menu-section {
-    padding: 24px 16px;
+    padding: 8px 6px; /* aggressively reduce inner padding to fit more */
+    max-width: 100%; /* menu fills the board on small screens */
+    margin: 0 auto;
   }
 
+  /* keep each menu item on a single row on small screens */
   .menu-item {
-    flex-direction: column;
+    flex-direction: row;
     gap: 8px;
+    align-items: center;
+    padding: 8px; /* reduced padding for tighter rows */
+    min-height: 36px; /* keep compact height */
   }
+  /* stack name and small meta (takeaway/family) on mobile so name keeps one line */
+  .item-info { flex-direction: column; gap: 4px; align-items: flex-start; min-width: 0; }
+  .item-name { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* hide descriptions only for items that do NOT have a takeaway note */
+  .menu-item:not(.has-note) .item-desc { display: none; }
+  .item-price { font-size: 14px; margin-left: 10px; }
+  
+  .menu-items { gap: 10px; }
+  .item-name { font-size: 15px; font-weight: 700; }
+  .item-desc { display: none; font-size: 12px; }
+  /* ensure item-note and family-price appear on their own small line under the name */
+  .item-note { display: inline-block; margin-left: 0; margin-top: 2px; font-size: 12px; }
+  .family-price { display: block; font-size: 12px; margin-top: 2px; color: rgba(251,191,36,0.85); }
+  .item-price { font-size: 15px; margin-left: 10px; }
+  
+  /* section title: bold, non-uppercase 'writing' for mobile */
+  .section-title { font-size: 24px; text-transform: none; font-weight: 800; border-bottom: none; margin-bottom: 10px; }
+
+  /* allow items with a take-away note to show a two-line description */
+  /* Show two-line descriptions for takeaway items (supports two approaches): */
+  /* 1) HTML can add `.has-note` on `.menu-item` when a takeaway exists */
+  .menu-item.has-note .item-desc,
+  /* 2) HTML can place the takeaway text in `.item-takeaway` inside the item */
+  .menu-item .item-takeaway {
+    display: -webkit-box; /* use clamp to limit to 2 lines */
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: normal;
+    color: rgba(255,255,255,0.78);
+    font-size: 13px;
+  }
+  
+  /* align the wood area (board) with the plate/menu on small screens */
+  .wood-area { max-width: 100%; transform: none; margin: 0 auto 12px; }
 
   .item-price {
     align-self: flex-start;
     margin-left: 30px;
     margin-top: 4px;
   }
-
   .item-name {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .item-desc {
-    font-size: 13px;
+    font-size: 12px;
+  }
+
+  /* keep takeaway/family meta readable without pushing name: small, muted line */
+  .menu-item.has-note .item-desc,
+  .menu-item .item-takeaway {
+    font-size: 12px;
+    margin-top: 2px;
+    color: rgba(255,255,255,0.78);
   }
 }
 
@@ -650,22 +663,18 @@ footer p {
     letter-spacing: 2px;
   }
 
-  /* Make header larger on small screens so plate is more prominent */
   .stone-plate {
-    height: 240px; /* increased from 170px */
-    background-size: cover;
+    height: 280px;
+    background-size: contain;
+    max-width: 100%;
+    margin: 0 auto 6px;
   }
-
-  /* Ensure header/logo scale up on very small screens so logo isn't too small */
-  .stone-plate .header-logo {
-    width: clamp(220px, 52vw, 420px); /* larger visual logo on phones */
-    top: 40%; /* nudge logo slightly lower so title sits nicely below */
-  }
+  .stone-plate .header-logo { width: clamp(280px, 60vw, 640px); }
 
   /* make nav icons slightly smaller on very small screens */
   .nav-item img {
-    width: 44px; /* reduced so icons fit comfortably */
-    height: 44px;
+    width: 48px;
+    height: 48px;
   }
 
   .header-text { text-align: center; }
@@ -674,61 +683,61 @@ footer p {
     /* show sidebar as a horizontal nav under header on very small screens */
     display: block;
   }
-  
 
-  .nav-item img {
-    width: 44px; /* final compact size for the tightest small screens */
-    height: 44px;
-  }
-
-  .section-title {
-    font-size: 22px;
-  }
-
+  /* Menu and board sizing */
   .menu-section {
-    padding: 20px 12px;
-    margin-bottom: 40px;
+    padding: 6px 6px;
+    margin-bottom: 18px;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
   }
 
-  /* Make menu contents more compact on very small screens and keep items on one line */
+  .wood-area { max-width: 100%; transform: none; margin: 0 auto 8px; }
+
+  /* Compact menu rows */
   .menu-item {
-    display: flex;
-    flex-direction: row; /* keep name and price on same line */
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 6px; /* tighter rows */
+    padding: 4px 6px;
+    min-height: 30px;
+    gap: 6px;
   }
 
-  .item-info {
-    flex: 1 1 auto;
-    min-width: 0; /* allow truncation */
-  }
+  .menu-items { gap: 8px; }
 
   .item-name {
-    font-size: 14px;
-    line-height: 1.1;
+    font-size: 12px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-weight: 700;
   }
 
-  .item-desc {
-    display: none; /* hide long descriptions to reduce height */
+  .item-desc { font-size: 12px }
+
+  /* Ensure takeaway two-line clamp still applies on very small screens */
+  .menu-item.has-note .item-desc,
+  .menu-item .item-takeaway {
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: normal;
+    color: rgba(255,255,255,0.78);
+    font-size: 12px;
   }
+
+  /* Stack name and meta (takeaway/family) under the name on very small screens */
+  .item-info { flex-direction: column; gap: 4px; align-items: flex-start; min-width: 0; }
+  .item-note { display: inline-block; margin-left: 0; margin-top: 2px; font-size: 11px; }
+  .family-price { display: block; font-size: 11px; margin-top: 2px; color: rgba(251,191,36,0.85); }
 
   .item-price {
-    font-size: 16px;
-    margin-left: 8px;
-    white-space: nowrap;
-    flex: 0 0 auto;
+    font-size: 14px;
   }
 
-  /* Reduce wood-scroll padding so content fits better */
-  .wood-scroll { padding: 10px 12px; }
-
-  /* Reduce nav gallery gap so icons can fit within viewport */
-  .nav-gallery { gap: 6px; }
+  /* mobile title style: bold text (not uppercase) */
+  .section-title { font-size: 20px; text-transform: none; font-weight: 800; border-bottom: none; margin-bottom: 8px }
 }
 
 /* Small/medium screens: place nav under the header and show it as a horizontal row */
@@ -752,7 +761,7 @@ footer p {
 
   .nav-gallery {
     flex-direction: row;
-    gap: 10px;
+    gap: 12px;
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -764,31 +773,21 @@ footer p {
   }
 
   .nav-item img {
-    width: 64px; /* reduced so nav fits on narrow tablets/large phones */
-    height: 64px;
+    width: 72px;
+    height: 72px;
   }
 
   /* when nav becomes horizontal, shrink/narrow the wood board to match layout */
   .wood-area {
-    /* make the wood board slightly narrower than the header for better readability */
-    max-width: calc(100% - 40px);
+    max-width: calc(100% - 48px);
     transform: none; /* remove desktop nudge so board stays centered */
     margin: 0 auto 12px;
   }
 
-  /* compact menu rows when nav is horizontal; keep items on one line */
-  .menu-item {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 8px;
-  }
-  .item-info { flex: 1 1 auto; min-width: 0; }
-  .item-name { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .item-desc { display: none; }
-  .item-price { font-size: 16px; flex: 0 0 auto; }
+  /* compact menu rows when nav is horizontal */
+  .menu-item { padding: 8px; }
+  .item-name { font-size: 14px; }
+  .item-price { font-size: 16px; }
 
   /* reduce vertical space between header and nav on small screens */
   header {
